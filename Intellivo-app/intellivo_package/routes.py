@@ -3,8 +3,6 @@ from intellivo_package import app, db, bcrypt, socketio
 from intellivo_package.models import User, UserPref
 from intellivo_package.forms import RegistrationForm, LoginForm, ProfileForm
 from flask_login import login_user, current_user, logout_user, login_required
-from flask import escape
-import jinja2
 
 # home page 
 @app.route("/")
@@ -25,8 +23,8 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(firstname=escape(form.firstname.data), lastname=escape(form.lastname.data), email=escape(form.email.data),
-                    password=escape(hashed_password))
+        user = User(firstname=form.firstname.data, lastname=form.lastname.data, email=form.email.data,
+                    password=hashed_password)
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created. You are now able to log in!', 'success')
@@ -57,8 +55,8 @@ def preferences():
             user=current_user
             if UserPref.query.filter_by(user_id = user.id).first():
                 UserPref.query.filter_by(user_id = user.id).delete()
-            userpref = UserPref(age=escape(int(form.age.data)), spirituality=escape(int(form.spirituality.data)), location=escape(int(form.location.data)), 
-                                engagement=escape(int(form.engagement.data)), user=user)
+            userpref = UserPref(age=int(form.age.data), spirituality=int(form.spirituality.data), location=int(form.location.data), 
+                                engagement=int(form.engagement.data), user=user)
             db.session.add(user)
             db.session.commit()
         return redirect(url_for('profile')) # was 'home'
@@ -90,6 +88,6 @@ def messageReceived(methods=['GET', 'POST']):
 @socketio.on('my event')
 def handle_my_custom_event(json, methods=['GET', 'POST']):
     print('received my event: ' + str(json))
-    socketio.emit('my response', escape(json), callback=messageReceived)
+    socketio.emit('my response', json, callback=messageReceived)
 
 #################### end chat routes ####################

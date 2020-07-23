@@ -4,7 +4,7 @@ LABEL MAINTAINER="Team Intellivo"
 ENV FLASK_APP=run.py
 
 COPY Intellivo-app /intellivo-app
-COPY matching-algorithm /intellivo-app/matching-algorithm
+COPY matching-algorithm/intellivo-matching-algo.ipynb /intellivo-app/intellivo-matching-algo.ipynb
 
 WORKDIR /intellivo-app
 
